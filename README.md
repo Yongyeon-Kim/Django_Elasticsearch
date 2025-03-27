@@ -6,8 +6,7 @@
 .
 ├── Dockerfile                    # Django 앱 빌드용 Docker 설정
 ├── README.md                     # 프로젝트 설명서
-├── csv_KCS.csv                   # KCS 문서 데이터 (CSV)
-├── csv_KDS.csv                   # KDS 문서 데이터 (CSV)
+├── *.csv                         # 문서 데이터 (CSV)
 ├── db.sqlite3                    # SQLite DB (PostgreSQL 대신 테스트용 가능)
 ├── docker-compose.yaml           # 전체 서비스 도커 컴포지션 정의
 ├── manage.py                     # Django 명령줄 관리 도구
@@ -31,7 +30,7 @@
 │   ├── urls.py                   # 전체 URL 라우팅
 │   └── wsgi.py                   # WSGI 서버 진입점
 ├── static/                       # 정적 파일 (이미지, CSS 등)
-│   └── 한맥기술_좌우_국문.png     # 삽입한 회사 로고 이미지
+│   └── 로고.png                  # 삽입한 로고 이미지
 └── wait-for-it.sh                # DB 컨테이너 대기 스크립트
 ```
 
@@ -62,7 +61,7 @@ docker compose up -d
 |-------------------------------|---------------------------------------------------|
 | `makemigrations`              | 모델 변경사항 추적, 마이그레이션 파일 생성       |
 | `migrate`                     | 마이그레이션 파일을 기반으로 DB에 테이블 생성     |
-| `load_csv`                    | CSV(KCS/KDS) 파일 데이터를 DB에 삽입              |
+| `load_csv`                    | CSV 파일 데이터를 DB에 삽입              |
 | `search_index --rebuild`      | 기존 색인 제거 후 인덱스 생성 및 데이터 색인      |
 
 ---
@@ -115,19 +114,4 @@ curl -X POST "http://localhost:9200/standard_docs/_search?pretty" \
 | 필드 이름            | 설명                                      |
 |----------------------|-------------------------------------------|
 | `_index`             | 인덱스 이름 (`standard_docs`)             |
-| `_score`             | 검색 관련도 점수 (높을수록 상위 노출됨)   |
-| `_source.code_type`  | 문서 분류 (KCS, KDS 등)                   |
-| `_source.code`       | 문서 고유 코드 번호                       |
-| `_source.name`       | 문서 제목                                 |
-| `_source.contents`   | 문서 내용 전문                            |
-
----
-
-## 🎨 UI 기능 요약 (`search.html`)
-
-| 기능                  | 설명                                                       |
-|-----------------------|------------------------------------------------------------|
-| ✅ 검색어 하이라이팅  | 검색어가 노란색으로 강조됨 (`highlight` 사용)              |
-| ✅ 실시간 검색        | 입력 시 자동으로 결과 반영 (JavaScript `fetch`)            |
-| ✅ 페이지네이션       | 검색 결과가 많을 경우 페이지 이동 지원                      |
-| ✅ 회사 로고 삽입     | `/static/` 경로의 이미지 출력 (`한맥기술_좌우_국문.png`)    |
+| `_score` 고.png`)    |

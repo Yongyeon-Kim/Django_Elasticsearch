@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>문서 검색</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .highlight {
+        background-color: yellow;
+      }
+      .result {
+        margin-bottom: 20px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 10px;
+      }
+      .score {
+        font-size: 0.9em;
+        color: gray;
+        margin-top: 5px;
+      }
+    </style>
+    <script>
+      function liveSearch() {
+        const query = document.getElementById("query").value;
+        fetch(`/search/?q=${encodeURIComponent(query)}`)
+          .then((response) => response.text())
+          .then((html) => {
+            document.getElementById("results").innerHTML = html;
+          });
+      }
+    </script>
+  </head>
+  <body>
+    <!-- ✅ 로고 이미지 -->
+    <img
+      src="/static/한맥기술_좌우_국문.png"
+      alt="회사 로고"
+      style="height: 60px"
+    />
+
+    <h2>문서 검색 (다국어 지원)</h2>
+
+    <!-- ✅ 검색 폼 -->
+    <form method="get" oninput="liveSearch()">
+      <input
+        type="text"
+        name="q"
+        id="query"
+        value="{{ query }}"
+        placeholder="검색어를 입력하세요"
+        style="width: 300px"
+      />
+      <button type="submit">검색</button>
+    </form>
+
+    <!-- ✅ 검색 결과 -->
+    <div id="results">
+      {% for result in results %}
+      <div class="result">
+        <strong
+          >{{ result.code_type }} {{ result.code }} - {{ result.name }}</strong
+        ><br />
+        <div class="score">Score: {{ result.meta.score|floatformat:2 }}</div>
+        {{ result.contents|truncatewords:50|safe }}
+      </div>
+      {% empty %}
+      <p>검색 결과가 없습니다.</p>
+      {% endfor %}
+    </div>
+
+    <!-- ✅ 페이지네이션 -->
+    {% if results.has_other_pages %}
+    <div>
+      {% if results.has_previous %}
+      <a href="?q={{ query }}&page={{ results.previous_page_number }}">이전</a>
+      {% endif %}
+
+      <span
+        >페이지 {{ results.number }} / {{ results.paginator.num_pages }}</span
+      >
+
+      {% if results.has_next %}
+      <a href="?q={{ query }}&page={{ results.next_page_number }}">다음</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  </body>
+</html>

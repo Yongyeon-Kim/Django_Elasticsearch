@@ -31,19 +31,41 @@
             document.getElementById("results").innerHTML = html;
           });
       }
+
+      function toggleFull(id) {
+        document.getElementById("summary-" + id).style.display = "none";
+        document.getElementById("full-" + id).style.display = "block";
+      }
+
+      function toggleSummary(id) {
+        document.getElementById("summary-" + id).style.display = "block";
+        document.getElementById("full-" + id).style.display = "none";
+      }
+
+      function toggleFullEn(id) {
+        document.getElementById("summary-en-" + id).style.display = "none";
+        document.getElementById("full-en-" + id).style.display = "block";
+      }
+
+      function toggleSummaryEn(id) {
+        document.getElementById("summary-en-" + id).style.display = "block";
+        document.getElementById("full-en-" + id).style.display = "none";
+      }
     </script>
   </head>
   <body>
-    <!-- ✅ 로고 이미지 -->
     <img
       src="/static/*.png"
       alt="회사 로고"
       style="height: 60px"
     />
+<<<<<<< HEAD
 
     <h2>문서 검색</h2>
+=======
+    <h2>문서 검색 (다국어 지원)</h2>
+>>>>>>> 0c29d0d (Support bilingual view and content toggle)
 
-    <!-- ✅ 검색 폼 -->
     <form method="get" oninput="liveSearch()">
       <input
         type="text"
@@ -56,32 +78,69 @@
       <button type="submit">검색</button>
     </form>
 
-    <!-- ✅ 검색 결과 -->
     <div id="results">
       {% for result in results %}
       <div class="result">
         <strong
           >{{ result.code_type }} {{ result.code }} - {{ result.name }}</strong
-        ><br />
+        >
+        {% if result.name_en %}
+        <div style="color: gray"><em>{{ result.name_en }}</em></div>
+        {% endif %}
         <div class="score">Score: {{ result.meta.score|floatformat:2 }}</div>
-        {{ result.contents|truncatewords:50|safe }}
+
+        <!-- ✅ 국문 내용 -->
+        <div id="summary-{{ forloop.counter }}">
+          {{ result.contents|truncatechars:300|linebreaksbr }}
+          <a href="#" onclick="toggleFull({{ forloop.counter }}); return false;"
+            >...더보기</a
+          >
+        </div>
+        <div id="full-{{ forloop.counter }}" style="display: none">
+          {{ result.contents|linebreaksbr }}
+          <a
+            href="#"
+            onclick="toggleSummary({{ forloop.counter }}); return false;"
+            >접기</a
+          >
+        </div>
+
+        <!-- ✅ 영문 내용 -->
+        {% if result.contents_en %}
+        <div style="margin-top: 10px; color: #666">
+          <strong>[EN]</strong>
+          <div id="summary-en-{{ forloop.counter }}">
+            {{ result.contents_en|truncatechars:300|linebreaksbr }}
+            <a
+              href="#"
+              onclick="toggleFullEn({{ forloop.counter }}); return false;"
+              >...more</a
+            >
+          </div>
+          <div id="full-en-{{ forloop.counter }}" style="display: none">
+            {{ result.contents_en|linebreaksbr }}
+            <a
+              href="#"
+              onclick="toggleSummaryEn({{ forloop.counter }}); return false;"
+              >less</a
+            >
+          </div>
+        </div>
+        {% endif %}
       </div>
       {% empty %}
       <p>검색 결과가 없습니다.</p>
       {% endfor %}
     </div>
 
-    <!-- ✅ 페이지네이션 -->
     {% if results.has_other_pages %}
     <div>
       {% if results.has_previous %}
       <a href="?q={{ query }}&page={{ results.previous_page_number }}">이전</a>
       {% endif %}
-
       <span
         >페이지 {{ results.number }} / {{ results.paginator.num_pages }}</span
       >
-
       {% if results.has_next %}
       <a href="?q={{ query }}&page={{ results.next_page_number }}">다음</a>
       {% endif %}

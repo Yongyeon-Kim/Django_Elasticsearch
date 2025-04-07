@@ -10,9 +10,10 @@ def search(request):
 
     if query:
         search_query = StandardDocDocument.search().query(
-            MultiMatch(query=query, fields=['name', 'contents'], fuzziness='auto')
+            MultiMatch(query=query, fields=['name', 'contents', 'name_en', 'contents_en'], 
+                       fuzziness='auto')
         ).highlight_options(pre_tags='<span class="highlight">', post_tags='</span>')
-        search_query = search_query.highlight('name', 'contents')
+        search_query = search_query.highlight('name', 'contents', 'name_en', 'contents_en')
 
         response = search_query[(int(page) - 1) * 10:int(page) * 10].execute()
         results = response.hits

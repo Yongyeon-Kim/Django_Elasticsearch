@@ -6,5 +6,8 @@ class StandardDoc(models.Model):
     name = models.CharField(max_length=255)
     contents = models.TextField()
 
+    name_en = models.CharField(max_length=255, blank=True, default="")
+    contents_en = models.TextField(blank=True, default="")
+
     def __str__(self):
         return f"{self.code_type} {self.code} {self.name}"

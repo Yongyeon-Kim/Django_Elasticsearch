@@ -11,5 +11,7 @@ class StandardDocDocument(Document):
             'code_type',
             'code',
             'name',
-            'contents'
+            'contents',
+            'name_en',       
+            'contents_en'      
         ]
